@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Suspicious PowerShell Script Executed - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Suspicious PowerShell Script Executed
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Suspicious PowerShell Script Executed
+        </h2>
+
+        <p>
+          When this alert appears, I immediately treat it as potentially serious because PowerShell is one of the most abused tools in modern attacks. Attackers use it for downloading malware, executing payloads in memory, credential dumping, persistence, reconnaissance, and lateral movement.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The first thing I want to understand is whether the PowerShell activity was legitimate administrative behavior or malicious execution disguised as normal system activity.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The PowerShell Execution</h2>
+
+      <br>
+
+      <p>
+        I would first review the full command line because the command itself usually reveals most of the attacker’s intention. Many malicious PowerShell scripts use encoded commands, hidden windows, bypass flags, or remote download functions to avoid detection.
+      </p>
+
+      <p>
+        At this stage, I focus on identifying suspicious execution patterns rather than immediately assuming compromise.
+      </p>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Full PowerShell command</li>
+        <li>Parent process</li>
+        <li>Username</li>
+        <li>Hostname</li>
+        <li>Execution timestamp</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR telemetry</li>
+        <li>Sysmon logs</li>
+        <li>Windows Event Logs</li>
+        <li>SIEM process events</li>
+        <li>PowerShell operational logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Analyze The Command Behavior</h2>
+
+      <br>
+
+      <p>
+        After collecting the command line, I carefully inspect how the script was executed. Legitimate PowerShell usage usually has clear administrative purposes, while malicious commands often contain obfuscation, Base64 encoding, download functions, or execution policy bypass attempts.
+      </p>
+
+      <blockquote>
+        <strong>Insight:</strong> Encoded commands are especially important because attackers use them to hide payloads from analysts and logging systems.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>EncodedCommand usage</li>
+        <li>ExecutionPolicy Bypass</li>
+        <li>Hidden window execution</li>
+        <li>DownloadString or WebClient</li>
+        <li>IEX (Invoke-Expression)</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Examples of suspicious commands:</h3>
+      <blockquote>
+        <code>powershell.exe -enc SQBmACgA...</code><br>
+        <code>powershell.exe -ExecutionPolicy Bypass</code><br>
+        <code>IEX(New-Object Net.WebClient).DownloadString()</code>
+      </blockquote>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Process command line logs</li>
+        <li>Script block logging</li>
+        <li>PowerShell history</li>
+        <li>EDR process tree</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Investigate The Parent Process</h2>
+
+      <br>
+
+      <p>
+        The parent process is one of the most valuable investigation points because it shows what launched PowerShell. Normal administrative activity usually starts from explorer.exe, management tools, or trusted scripts. Malicious activity often originates from browsers, Office applications, Outlook, or scripting engines.
+      </p>
+
+      <blockquote>
+        <strong>Critical Indicator:</strong> If Word, Excel, Chrome, Outlook, or mshta.exe spawned PowerShell, the alert severity immediately increases.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Office application spawning PowerShell</li>
+        <li>Browser-based execution</li>
+        <li>Script interpreter chains</li>
+        <li>Scheduled task execution</li>
+        <li>Service-based execution</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR process tree</li>
+        <li>Sysmon Event ID 1</li>
+        <li>Windows Security logs</li>
+        <li>Endpoint investigation console</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Check What The Script Did</h2>
+
+      <br>
+
+      <p>
+        Once execution is confirmed, I investigate the actions performed by the script. Many PowerShell attacks attempt to download secondary payloads, create persistence, disable security tools, or communicate with external infrastructure.
+      </p>
+      
+      <p>
+        This stage is critical because it determines whether the PowerShell activity remained suspicious or became an active compromise.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>File downloads</li>
+        <li>External network connections</li>
+        <li>Registry modifications</li>
+        <li>Credential dumping behavior</li>
+        <li>Antivirus tampering</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Network logs</li>
+        <li>Firewall logs</li>
+        <li>Temp directories</li>
+        <li>Registry changes</li>
+        <li>Defender or AV alerts</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Investigate Persistence And Lateral Movement</h2>
+
+      <br>
+
+      <p>
+        If malicious execution is confirmed, I continue by checking whether the attacker attempted persistence or movement inside the environment. PowerShell is heavily used in post-exploitation activity because it provides direct access to Windows management and remote execution features.
+      </p>
+      
+      <p>
+        At this stage, I also review whether the same command appeared on multiple hosts because attackers often reuse scripts across systems.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Scheduled tasks</li>
+        <li>WMI persistence</li>
+        <li>Run registry keys</li>
+        <li>Remote PowerShell sessions</li>
+        <li>PsExec or WinRM usage</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Task Scheduler logs</li>
+        <li>WMI event logs</li>
+        <li>Registry paths</li>
+        <li>Remote login logs</li>
+        <li>SIEM correlation searches</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Determine Impact And Respond</h2>
+
+      <br>
+
+      <p>
+        The final stage is determining whether the PowerShell execution resulted in actual compromise. A suspicious command alone is not enough; the investigation should confirm whether malware executed, credentials were exposed, persistence was created, or external communication occurred.
+      </p>
+
+      <p>
+        If compromise indicators are confirmed, I would isolate the endpoint immediately and escalate the incident for deeper response activity.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Isolate affected host</li>
+        <li>Block malicious domains/IPs</li>
+        <li>Terminate malicious processes</li>
+        <li>Reset compromised accounts</li>
+        <li>Hunt for related indicators across environment</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Was the PowerShell execution legitimate or malicious?</li>
+        <li>What launched the script?</li>
+        <li>Did the script download or execute payloads?</li>
+        <li>Was persistence established?</li>
+        <li>Did the attacker move beyond the original host?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are clear, the incident can be properly contained and escalated if necessary.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/app.js"></script>
+
+</body>
+</html>

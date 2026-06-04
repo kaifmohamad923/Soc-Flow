@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOC Notes - SOCFlow</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+  <div class="sidebar">
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-book"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      Notes
+    </div>
+
+    <section class="content-box">
+      <h2>SOC Fundamentals</h2>
+      
+      <h3>Introduction to SOC</h3>
+      <p>Security Operations Center (SOC) is a centralized unit where cybersecurity professionals continuously monitor, detect, and respond to cyber threats in real-time.</p>
+      
+      <img src="assets/images/note1.png" alt="Image" class="scenario-img">
+    
+    <section class="content-box">
+      <h2>SOC Types and Roles</h2>
+      
+      <h3>SOC</h3>
+      <p>Organizations choose different SOC models based on budget and security needs</p>
+      
+      <ul class="checklist">
+        <li><strong>In-House SOC</strong> is fully managed by the company and gives maximum control but costs more.</li>
+        <li><strong>Hybrid SOC</strong> combines internal staff with outsourced monitoring for better flexibility]</li>
+        <li><strong>MSSP</strong> (Managed Security Service Provider) fully outsources monitoring and alert handling to a third party. </li>
+        <li><strong>SOC-as-a-Service (SOCaaS)</strong> is a cloud-based subscription SOC that provides tools, experts, and incident response support without building a full int</li>
+      </ul>
+      <img src="assets/images/note2.png" alt="Image" class="scenario-img">
+
+      <br><br>
+      <h3>SOC Roles & Responsibilities: </h3>
+      <p>A SOC team is divided into tiered analysts and specialized roles.</p>
+      
+      <ul class="checklist">
+        <li><strong>L1 SOC Analysts</strong> monitor alerts, filter false positives, and triage incidents. </li>
+        <li><strong>L2 Analysts</strong> investigate escalated alerts, find root causes, assess impact, and contain threats. </li>
+        <li><strong>L3 Analysts</strong> handle advanced threats, forensics, and vulnerability analysis. Specialized roles include the <strong>Incident Responder</strong>, who controls active breaches and minimizes damage; </li>
+        <li>the <strong>Threat Hunter</strong>, who proactively searches for hidden threats; the <strong>Security Engineer</strong>, who manages tools like SIEM, EDR, and SOAR and improves automation; </li>
+        <li>and the <strong>SOC Manager</strong>, who oversees SOC operations, team management, playbooks, and reporting to leadership. </li>
+      </ul>
+      <img src="assets/images/note3.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>SIEM and Analyst Relationship</h2>
+      
+      <h3>What is SIEM?</h3>
+      <p>SIEM (Security Information and Event Management) is a security solution used in SOCs to collect, monitor, and analyze logs in real time to detect threats.  It filters data and generates alerts for suspicious activity. Example: if someone enters 20 wrong passwords in 10 seconds, SIEM detects it as suspicious and creates an alert based on predefined rules.  Popular SIEM tools include Splunk, QRadar, ArcSight ESM, and FortiSIEM. </p>
+      
+      <br><br>
+      <h3>Analyst Relationship: </h3>
+      <p>SOC analysts mainly work with SIEM alerts. When an alert is generated, the analyst investigates whether it is a real threat or a false positive using tools like EDR, Log Management, and Threat Intelligence Feeds. Analysts check details such as IPs, hostnames, usernames, and file hashes to understand the incident </p>
+      
+      <img src="assets/images/note4.png" alt="Image" class="scenario-img">
+      
+    </section>
+
+    <section class="content-box">
+      <h2>Log Management</h2>
+      <p>Log Management systems collect logs from multiple sources like firewalls, operating systems, proxies, EDRs, and web servers into one central place, making investigations faster and more efficient for SOC analysts. Analysts use it to search suspicious IPs, domains, hashes, or communication activity across the network and identify affected devices. It helps detect hidden threats, track attacker communication, and verify whether other systems are connected to malicious infrastructure that SIEM may have missed. </p>
+      <img src="assets/images/note5.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>EDR - Endpoint Detection and Response</h2>
+      <p>EDR is a security solution that continuously monitors endpoint devices like laptops and servers, collects activity data, detects threats, and helps analysts respond quickly. SOC analysts use EDR tools such as SentinelOne, Carbon Black, and FireEye HX to investigate processes, network connections, browser history, file activity, and IOCs across multiple hosts. EDR also supports live investigation by allowing analysts to remotely access infected machines and provides containment features to isolate compromised devices from the network while still maintaining communication with the EDR server for further analysis.</p>
+    </section>
+
+    <section class="content-box">
+      <h2>SOAR – Security Orchestration Automation and Response</h2>
+      <p>SOAR is a platform that connects security tools and automates SOC tasks, helping analysts respond faster and reduce manual work. It can automatically check IP reputation, query file hashes, scan files in sandboxes, and use playbooks for step-by-step investigations. SOAR also centralizes tools like SIEM, log management, and threat intelligence into one platform, improving efficiency and consistency across the SOC team. Popular SOAR tools include Splunk Phantom, IBM Resilient, Demisto, and Logsign.</p>
+      <img src="assets/images/note6.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>Threat Intelligence Feed</h2>
+      <p>Threat Intelligence Feeds provide data about known threats such as malicious IPs, domains, malware hashes, and command & control (C2) servers to help SOC analysts investigate incidents faster. Analysts use platforms like VirusTotal and Talos Intelligence to check whether files, hashes, or IPs were involved in previous attacks. However, if no threat information is found, it does not guarantee the file is safe, so further static or dynamic analysis may still be required. Also, IP addresses can change ownership, meaning a previously malicious IP may later become harmless</p>
+    </section>
+
+    <section class="content-box">
+      <h2>Common Mistakes Made by SOC Analysts</h2>
+      <p>Common SOC analyst mistakes include over-trusting VirusTotal, short sandbox analysis, poor log investigation, and ignoring old VirusTotal cache results. Malware may bypass AV detection, avoid sandbox execution, or activate later, so deeper analysis and proper log checking are always important.</p>
+    </section>
+
+    <section class="content-box">
+      <h2>Cyber Kill Chain</h2>
+      
+      <h3>Introduction to Cyber Kill Chain</h3>
+      <p>The Cyber Kill Chain is a cybersecurity model that explains the stages of a cyber attack from planning to achieving the attacker’s goal. It helps SOC analysts detect and stop attacks at different stages.</p>
+      <img src="assets/images/note7.png" alt="Image" class="scenario-img">
+
+      <ul class="checklist">
+        <li><strong>Reconnaissance:</strong> The attacker gathers information about the target such as IPs, domains, employees, emails, or vulnerabilities using OSINT and scanning tools.</li>
+        <li><strong>Weaponization:</strong> The attacker creates a malicious payload by combining malware with an exploit, document, or script to attack the target.</li>
+        <li><strong>Delivery:</strong> The malware is delivered to the victim through phishing emails, malicious links, USBs, websites, or attachments.</li>
+        <li><strong>Exploitation:</strong> The malicious file or exploit executes on the victim’s system by exploiting a vulnerability or tricking the user.</li>
+        <li><strong>Installation:</strong> Malware installs itself on the target system to maintain persistence and survive reboots.</li>
+        <li><strong>Command and Control (C2):</strong> The infected system connects to the attacker’s server to receive commands, send data, or download more malware.</li>
+        <li><strong>Actions on Objectives:</strong> The attacker performs the final goal such as data theft, ransomware deployment, privilege escalation, or destroying systems.</li>
+      </ul>
+    </section>
+
+    <section class="content-box">
+      <h2>MITRE ATT&CK Framework</h2>
+      
+      <h3>Introduction</h3>
+      <p>The MITRE ATT&CK Framework is a cybersecurity knowledge base used by SOC analysts, threat hunters, and security teams to understand attacker behavior that documents real-world attacker tactics, techniques, and procedures (TTPs). It helps security teams understand how attackers operate, detect threats, investigate incidents, and improve defenses.</p>
+      
+      <br><br>
+      <h3>MITRE Matrix, Tactics, Techniques & Sub-Techniques</h3>
+      <ul class="checklist">
+        <li>The MITRE Matrix organizes attacks into different Tactics and Techniques.</li>
+        <li><strong>Tactics</strong> represent the attacker’s goal, such as Initial Access, Persistence, Privilege Escalation, or Exfiltration.</li>
+        <li><strong>Techniques</strong> explain how attackers achieve those goals, like phishing or credential dumping.</li>
+        <li><strong>Sub-Techniques</strong> provide more detailed variations of a technique.</li>
+      </ul>
+      <img src="assets/images/note8.png" alt="Image" class="scenario-img">
+
+      <br><br>
+      <h3>Mitigations, Groups & Software</h3>
+      <ul class="checklist">
+        <li><strong>Mitigations:</strong> Mitigation means the security measures or actions used to reduce, prevent, or minimize the impact of cyber-attacks. Examples include firewalls, MFA, antivirus, patching, endpoint protection, and security awareness training.</li>
+        <li><strong>Groups & Software:</strong> Groups are known threat actors or APT groups tracked by MITRE based on their attack behavior. Software refers to malware, tools, or utilities used by attackers during attacks, such as ransomware, RATs, or credential dumping tools.</li>
+      </ul>
+    </section>
+
+    <section class="content-box">
+      <h2>Phishing Email Analysis</h2>
+      
+      <h3>Introduction to Phishing</h3>
+      <p>Phishing is a social engineering attack where attackers trick users into clicking malicious links, downloading malware, or sharing sensitive information through fake emails, websites, or messages. In the Cyber Kill Chain, phishing emails are commonly used in the Delivery stage to deliver malware or malicious links to the victim. In the Cyber Kill Chain, phishing is part of the Delivery stage,(3rd Step) where attackers use phishing emails to deliver malware or malicious links to the victim.</p>
+      
+      <br><br>
+      <h3>What is an Email Header and How to Read Them?</h3>
+      <p>An email header contains technical details about an email such as the sender, recipient, subject, date, reply address, mail servers, spam score, and authentication results like SPF/DKIM. SOC analysts use headers to trace the email route, verify if the sender is legitimate, and detect phishing or spoofed emails. Important fields include From, To, Subject, Date, Return-Path, Received, DKIM, Message-ID, and X-Spam Status. Headers can be viewed in Gmail by downloading the email as an .eml file or through Outlook Internet Headers.</p>
+      
+      <ul class="checklist">
+        <li><strong>SPF (Sender Policy Framework):</strong> Checks whether the mail server sending the email is authorized by the domain owner. Helps prevent sender spoofing.</li>
+        <li><strong>DKIM (DomainKeys Identified Mail):</strong> Adds a digital signature to emails so the receiver can verify the email was not modified during transmission.</li>
+        <li><strong>DMARC (Domain-based Message Authentication, Reporting & Conformance):</strong> Uses SPF and DKIM results to decide what to do with suspicious emails (allow, quarantine, or reject) and provides reporting to domain owners.</li>
+      </ul>
+      
+      <blockquote>
+        <strong>Authentication Summary:</strong><br>
+        SPF → Verify Sender Server<br>
+        DKIM → Verify Email Integrity<br>
+        DMARC → Decide Action on Failed Emails
+      </blockquote>
+      
+      <img src="assets/images/note9.png" alt="Image" class="scenario-img">
+      <img src="assets/images/note10.png" alt="Image" class="scenario-img">
+
+    <section class="content-box">
+      <h2>Static Analysis vs Dynamic Analysis</h2>
+      <ul class="checklist">
+        <li><strong>Static Analysis:</strong> Examining a file, email, or malware without running it to identify suspicious content like hashes, strings, macros, or URLs. </li>
+        <li><strong>Dynamic Analysis:</strong>  Running the file or malware in a sandbox/test environment to observe behavior such as network connections, process activity, or file changes </li>
+      </ul>
+    </section>
+    </section>
+
+    <section class="content-box">
+      <h2>Detecting Web Attacks </h2>
+      
+      <h3>Introduction </h3>
+      <p>Web applications are browser-based services like Google, Facebook, and YouTube that store important user and business data.  Because they are public-facing, attackers target them to steal data, gain access, or disrupt services.  According to Acunetix, 75% of cyber attacks target web applications, making web attack detection important for SOC analysts. </p>
+      
+      <blockquote>
+        <strong>Architecture:</strong><br>
+        User ↔ Web Application ↔ Database <br>
+        ↑ <br>
+        Attacker 
+      </blockquote>
+      
+      <br><br>
+      <h3>How Web Applications Work </h3>
+      <p>Web attacks happen when attackers exploit vulnerabilities in web applications by sending malicious input through forms, URLs, headers, search bars, or file uploads.  If the application does not properly validate or sanitize the input, the attacker can steal data, execute code, bypass authentication, or gain server access. </p>
+      
+      <blockquote>
+        <strong>Attack Flow:</strong><br>
+        Attacker Input <br>
+        ↓ <br>
+        Vulnerable Web Application <br>
+        ↓ <br>
+        Exploit Executes <br>
+        ↓ <br>
+        Data Theft / Server Compromise 
+      </blockquote>
+      
+      <br><br>
+      <h3>Prevention</h3>
+      <p>Validate and sanitize all user input, use secure coding practices, keep web applications updated, apply proper authentication/authorization, and use security tools like WAF, IPS, and SIEM to detect attacks early.</p>
+    </section>
+
+    <section class="content-box">
+      <h2>SQL Injection </h2>
+      <p>SQL Injection happens when a web application directly inserts unsanitized user input into SQL queries, allowing attackers to manipulate the database.  Attackers can bypass login pages, steal sensitive data, modify database entries, or even execute system commands.  SOC analysts detect SQLi by monitoring suspicious SQL keywords like SELECT, UNION, WHERE, special characters (', --), unusual request frequency, and automated tools like sqlmap.  Prevention includes sanitizing user input, avoiding raw SQL queries, and using updated secure frameworks. </p>
+      
+      <br><br>
+      <h3>Prevention </h3>
+      <p>Sanitize user input, use parameterized queries/prepared statements, avoid raw SQL queries, and keep frameworks updated. </p>
+      <img src="assets/images/note11.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>Cross Site Scripting (XSS) </h2>
+      <p>XSS is a web attack where attackers inject malicious JavaScript into website input fields such as search bars, comment sections, login forms, or URL parameters.  When another user opens the infected page, the script executes in their browser and can steal cookies, sessions, credentials, or redirect the victim to malicious websites. </p>
+      
+      <br><br>
+      <h3>Prevention </h3>
+      <p>Sanitize and encode user input, validate data before displaying it on webpages, and use updated secure frameworks. </p>
+     <img src="assets/images/note12.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>Command Injection </h2>
+      <p>Command Injection is a web attack where attackers place operating system commands into website input fields, URL parameters, headers, or file names.  If the web application directly passes this input to the server shell without validation, the operating system executes the attacker’s command.  This can allow attackers to run commands, create reverse shells, steal data, or fully compromise the server. </p>
+      
+      <blockquote>
+        <strong>Attack Flow:</strong><br>
+        User Input <br>
+        ↓ <br>
+        OS Command Execution <br>
+        ↓ <br>
+        Server Compromise 
+      </blockquote>
+      
+      <ul class="checklist">
+        <li><strong>Attacker Goals:</strong>  Execute commands , Reverse shell access , Full server control </li>
+        <li><strong>Detection:</strong>  Commands like ls, cat, dir , Suspicious User-Agent values , Reverse shell payloads </li>
+        <li><strong>Prevention:</strong>   Sanitize all input , Limit application privileges , Use containers/virtualization , avoid passing user data directly to the OS shell, and limit server/application privileges. </li>
+      </ul>
+    </section>
+
+    <section class="content-box">
+      <h2>IDOR (Insecure Direct Object Reference) </h2>
+      <p>IDOR is a web attack where attackers change IDs or parameters in URLs or requests to access data that does not belong to them because the application does not properly check authorization. </p>
+      
+      <blockquote>
+        <code>id=1</code> → Own Data <br>
+        <code>id=2</code> → Other User Data 
+      </blockquote>
+      
+      <br><br>
+      <h3>Prevention</h3>
+      <p>Implement proper authorization checks for every request, avoid exposing unnecessary IDs/parameters, and use session-based access control.</p>
+    </section>
+
+    <section class="content-box">
+      <h2>RFI & LFI </h2>
+      
+      <h3>LFI (Local File Inclusion) </h3>
+      <p>LFI occurs when attackers manipulate file path parameters to access sensitive files stored on the local server, such as /etc/passwd or configuration files. </p>
+      
+      <blockquote>
+        <strong>LFI Flow:</strong><br>
+        Attacker Input <br>
+        ↓ <br>
+        Local File Path Manipulation <br>
+        ↓ <br>
+        Sensitive Server File Access 
+      </blockquote>
+      <p><strong>LFI Prevention:</strong>  Validate file paths, restrict access to sensitive directories, and disable unnecessary file inclusion features. </p>
+
+      <br><br>
+      <h3>RFI (Remote File Inclusion) </h3>
+      <p>RFI occurs when attackers force the web application to load a malicious file from a remote server, which may execute malicious code on the target system. </p>
+      
+      <blockquote>
+        <strong>RFI Flow:</strong><br>
+        Attacker Input <br>
+        ↓ <br>
+        Remote Malicious File Included <br>
+        ↓ <br>
+        Code Execution on Server 
+      </blockquote>
+      <p><strong>RFI Prevention:</strong>  Disable remote file inclusion, validate user input, restrict external URLs, and keep web applications updated.</p>
+    </section>
+
+    <section class="content-box">
+      <h2>File Upload / Web Shell </h2>
+      <p>A File Upload or Web Shell attack happens when attackers upload a malicious file (such as .php, .jsp, or .aspx) through an insecure upload feature on a website.  Once uploaded, the web shell executes commands on the server, allowing attackers to gain remote access, upload malware, steal data, or control the server. </p>
+      
+      <blockquote>
+        <strong>Attack Flow:</strong><br>
+        Malicious File Upload <br>
+        ↓ <br>
+        Stored on Server <br>
+        ↓ <br>
+        Web Shell Executes <br>
+        ↓ <br>
+        Remote Server Control 
+      </blockquote>
+      
+      <br><br>
+      <h3>Prevention </h3>
+      <p>Restrict allowed file types, validate file content, scan uploaded files, rename uploads, and store files outside the web root. </p>
+    </section>
+
+    <section class="content-box">
+      <h2>Malware Analysis Fundamentals </h2>
+      
+      <h3>Introduction to Malware Analysis </h3>
+      <p>Malware Analysis is the process of examining malicious files or programs to understand how they work, what damage they cause, and how to detect or remove them.  SOC analysts use malware analysis to identify Indicators of Compromise (IOCs), attacker behavior, persistence methods, and command & control (C2) communication. </p>
+      <img src="assets/images/note13.png" alt="Image" class="scenario-img">
+      
+      <br><br>
+      <h3>How Malware Analysis Helps SOC Analysts </h3>
+      <p>Malware analysis helps SOC analysts detect threats faster, identify infected systems, understand attacker behavior, improve incident response, and create better detection rules.  It also helps discover malicious IPs, domains, hashes, registry changes, and suspicious processes. </p>
+    </section>
+
+    <section class="content-box">
+      <h2>Malware Definition and Malware Types </h2>
+      <p>Malware is malicious software created to damage systems, steal information, spy on users, or gain unauthorized access. </p>
+      <p>Common malware types include: </p>
+      <ul class="checklist">
+        <li><strong>Virus</strong> → Infects files/programs </li>
+        <li><strong>Worm</strong> → Spreads automatically across networks </li>
+        <li><strong>Trojan</strong> → Pretends to be legitimate software </li>
+        <li><strong>Ransomware</strong> → Encrypts files and demands money </li>
+        <li><strong>Spyware</strong> → Secretly steals information </li>
+        <li><strong>Rootkit</strong> → Hides malicious activity </li>
+        <li><strong>Botnet</strong> → Group of infected devices controlled remotely </li>
+      </ul>
+      <img src="assets/images/note14.png" alt="Image" class="scenario-img">
+    </section>
+
+    <section class="content-box">
+      <h2>Which Approach Should You Choose When Analyzing Malware? </h2>
+      
+      <h3>Static Analysis </h3>
+      <p>Static Analysis means examining malware without running it. Analysts check file hashes, strings, imports, file structure, or suspicious code.  It is safer and faster but may not reveal full behavior. </p>
+      
+      <br><br>
+      <h3>Dynamic Analysis </h3>
+      <p>Dynamic Analysis means running malware inside a safe sandbox environment to observe its real behavior such as file changes, network traffic, processes, or registry modifications. </p>
+      
+      <blockquote>
+        Static Analysis → No Execution <br>
+        Dynamic Analysis → Run in Sandbox 
+      </blockquote>
+      
+      <p>Usually, analysts use both methods together because Static Analysis gives quick information while Dynamic Analysis shows the actual behavior of the malware. </p>
+      <img src="assets/images/note15.png" alt="Image" class="scenario-img">
+    </section>
+
+  </main>
+
+
+  <!-- JAVASCRIPT -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

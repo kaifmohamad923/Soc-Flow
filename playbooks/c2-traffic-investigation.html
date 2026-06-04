@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C2 Traffic Alert Investigation - SOCFlow</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/phishing-playbook.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h1>SOCFlow</h1>
+    </div>
+    <div class="sidebar-center">
+        <ul class="sidebar-menu">
+            <li><a href="../index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li><a href="../scenarios.html"><i class="fas fa-folder-open"></i><span>Scenarios</span></a></li>
+            <li class="active"><a href="../playbooks.html"><i class="fas fa-clipboard"></i><span>Playbooks</span></a></li>
+            <li><a href="../notes.html"><i class="fas fa-clipboard"></i><span>Notes</span></a></li>
+        </ul>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="../contact.html" class="contact-btn"><i class="fas fa-envelope"></i><span>Contact</span></a>
+    </div>
+</div>
+
+<main class="main-content">
+    <div class="playbook-progress">
+        <div id="progressFill" class="playbook-progress-fill"></div>
+    </div>
+
+    <div class="breadcrumb">Dashboard / Playbooks / Command and Control (C2) Traffic Investigation</div>
+
+    <div id="playbook-viewport"></div>
+
+  <script>
+        window.onload = function () {
+            alert(
+                "⚠️ Educational use only. Verify all findings manually before taking action."
+            );
+        };
+
+// ==========================================
+// C2 TRAFFIC PLAYBOOK LOGIC
+// ==========================================
+
+// 1. Centralized Playbook Database Maps
+const playbooksData = {
+    "c2_investigation": {
+        
+        "steps": {
+            "step1": {
+                "title": "Step 1 - Validate the Alert",
+                "description": "Before digging into threat intelligence, verify the network alert details. Ensure you have the internal source IP, the external destination IP or Domain, destination port, and the protocol used (e.g., HTTP, HTTPS, DNS).<br><br><b>Where to Check</b><br>You can usually find this information in your SIEM, Next-Generation Firewall (NGFW), Network Intrusion Detection System (NIDS), or Web Proxy logs.<br><br><b>What Indicates Suspicious Activity?</b><br>Alerts triggered by communication to known malicious IPs, traffic over non-standard ports (e.g., outbound SSH on port 443), or unhandled exceptions from your network security appliances.<br><br><b>Question</b><br>Does the alert contain enough network telemetry to continue the investigation?",
+                "progress": 20,
+                "choices": [
+                    { "text": "Yes", "next": "step2" },
+                    { "text": "No", "next": "resultA" }
+                ]
+            },
+            "step2": {
+                "title": "Step 2 - Analyze the Destination Identity",
+                "description": "Investigate the external IP address or domain to determine its reputation and classification. Attackers often use newly registered domains, dynamic DNS, or compromised legitimate sites to host their C2 servers.<br><br><b>Where to Check</b><br>Search the destination indicator in your threat intelligence platform (TIP) or OSINT sources.<br><br><b>What Indicates Suspicious Activity?</b><br>Domains registered in the last 30 days, dynamic DNS providers (e.g., DuckDNS), known sinkholes, or IPs flagged by the community for botnet/Cobalt Strike activity.<br><br><b>Question</b><br>Is the destination domain or IP categorized as malicious, suspicious, or newly registered?",
+                "progress": 40,
+                "resources": [
+                    { "name": "VirusTotal", "url": "https://www.virustotal.com" },
+                    { "name": "Cisco Talos IP & Domain Reputation", "url": "https://talosintelligence.com" },
+                    { "name": "URLhaus / AbuseIPDB", "url": "https://www.abuseipdb.com" }
+                ],
+                "choices": [
+                    { "text": "Suspicious / Malicious", "next": "step3" },
+                    { "text": "Legitimate / Known Good", "next": "resultB" }
+                ]
+            },
+            "step3": {
+                "title": "Step 3 - Analyze the Traffic Pattern",
+                "description": "C2 malware typically uses \"beaconing\" to phone home. This means it checks in with the attacker at regular intervals. You need to determine if the traffic looks automated and, most importantly, if the firewall actually allowed it through.<br><br><b>Where to Check</b><br>Filter your firewall or proxy logs for the internal host communicating with the destination IP over a longer time range (e.g., 24 to 48 hours).<br><br><b>What Indicates Suspicious Activity?</b><br>A highly repetitive, robotic pattern of connections (e.g., exactly every 5 minutes or 60 minutes) with identical bytes sent/received. Note: Advanced attackers add \"jitter\" (randomized timing) to hide beacons, but a persistent pattern will still emerge over time.<br><br><b>Question</b><br>Was the network traffic successfully blocked by the firewall or proxy?",
+                "progress": 60,
+                "choices": [
+                    { "text": "Yes (Traffic Blocked / Dropped)", "next": "resultC" },
+                    { "text": "No (Traffic Allowed)", "next": "step4" }
+                ]
+            },
+            "step4": {
+                "title": "Step 4 - Identify the Source Process on Endpoint",
+                "description": "If the network traffic was allowed out, you must identify exactly what on the internal machine made the connection. Legitimate processes occasionally mimic beaconing (like Spotify, antivirus updaters, or cloud sync tools).<br><br><b>Where to Check</b><br>Review Endpoint Detection and Response (EDR) telemetry or Windows Sysmon logs (specifically Event ID 3: Network Connection) for the affected host.<br><br><b>What Indicates Suspicious Activity?</b><br>Network connections originating from built-in system tools that shouldn't be browsing the web (e.g., powershell.exe, cmd.exe, rundll32.exe), unverified executables in the AppData folder, or processes running from temporary directories.<br><br><b>Question</b><br>Was the network connection initiated by a suspicious, unauthorized, or hidden process?",
+                "progress": 80,
+                "choices": [
+                    { "text": "Yes", "next": "step5" },
+                    { "text": "No", "next": "resultB" }
+                ]
+            },
+            "step5": {
+                "title": "Step 5 - Assess Post-Compromise Impact",
+                "description": "If a malicious process successfully established a C2 channel, determine if the attacker interacted with the machine. Look for evidence that the attacker pushed secondary payloads or stole data.<br><br><b>Where to Check</b><br>Review EDR process execution trees, check SIEM logs for unusually large outbound data transfers (bytes sent > bytes received), and monitor for internal network scanning originating from the host.<br><br><b>What Indicates Suspicious Activity?</b><br>The source process spawning secondary command shells, dumping credentials (e.g., accessing LSASS), dropping new executables, or a massive spike in outbound data transfer indicating exfiltration.<br><br><b>Question</b><br>Is there evidence of active attacker commands, secondary malware execution, or data exfiltration?",
+                "progress": 95,
+                "resources": [
+                    { "name": "MITRE ATT&CK (Command and Control / Exfiltration tactics)", "url": "https://attack.mitre.org/" },
+                    { "name": "Internal EDR / Antivirus Alerts", "url": "#" }
+                ],
+                "choices": [
+                    { "text": "Yes", "next": "resultE" },
+                    { "text": "No", "next": "resultD" }
+                ]
+            },
+            
+            // ----------------------------------------------------
+            // FINAL RESULT NODES
+            // ----------------------------------------------------
+            "resultA": { 
+                "title": "🟢 Result A: Likely False Positive", 
+                "description": "The alert lacks sufficient network telemetry (missing destination IPs or source ports) to conduct a valid investigation. Additional logging configuration may be required.",
+                "isResult": true 
+            },
+            "resultB": { 
+                "title": "🟡 Result B: Possible False Positive", 
+                "description": "The traffic was traced to a legitimate, benign application (e.g., software updater, background syncing tool) communicating with a safe destination. The traffic only resembled C2 beaconing by coincidence.",
+                "isResult": true 
+            },
+            "resultC": { 
+                "title": "🔴 Result C: True Positive - Threat Blocked", 
+                "description": "A malicious C2 connection was attempted, but the perimeter defenses (Firewall, Proxy, or DNS sinkhole) successfully blocked or dropped the traffic. The endpoint is infected, but the attacker has no remote control. Host isolation and remediation are required.",
+                "isResult": true 
+            },
+            "resultD": { 
+                "title": "🔴 Result D: True Positive - Host Compromised (Beaconing)", 
+                "description": "The endpoint is infected and actively communicating with attacker infrastructure. While the C2 channel is open, there is no evidence yet of data exfiltration or active hands-on-keyboard attacker movement. Immediate host isolation is required.",
+                "isResult": true 
+            },
+            "resultE": { 
+                "title": "🚨 Result E: True Positive - Active Intrusion & Exfiltration", 
+                "description": "The endpoint is fully compromised. The C2 channel is active, and telemetry shows the attacker is actively issuing commands, dropping secondary payloads, or exfiltrating data. Declare an incident and begin immediate containment and response procedures.",
+                "isResult": true 
+            }
+        }
+    }
+};
+
+// 2. State Engine Tracking Variables
+let currentPlaybookKey = "c2_investigation";
+let currentStepId = "step1";
+
+/**
+ * State Transition Engine
+ */
+function renderCurrentStep() {
+    const viewport = document.getElementById("playbook-viewport");
+    const playbook = playbooksData[currentPlaybookKey];
+    const node = playbook.steps[currentStepId];
+
+    if (!viewport || !node) return;
+
+    // Update Progress Indicator Layout
+    const progressVal = node.progress || 100;
+    const progressFill = document.getElementById("progressFill");
+    if (progressFill) {
+        progressFill.style.height = progressVal + "%";
+    }
+
+    // Handle Ultimate Resolution/Result Output Cards
+    if (node.isResult) {
+        viewport.innerHTML = `
+            <section class="content-box result-card">
+                <h2>${node.title}</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; line-height: 1.6;">${node.description}</p>
+                <div class="decision-buttons" style="justify-content: center;">
+                    <button class="decision-btn" onclick="restartPlaybookEngine()">Restart Playbook</button>
+                </div>
+            </section>
+        `;
+        return;
+    }
+
+    // Build Step Meta Elements Layout (Tools & Links)
+    let resourcesHTML = "";
+    if (node.resources && node.resources.length > 0) {
+        resourcesHTML = `<div class="resource-grid" style="justify-content: center;">`;
+        node.resources.forEach(res => {
+            resourcesHTML += `<a target="_blank" href="${res.url}">${res.name}</a>`;
+        });
+        resourcesHTML += `</div>`;
+    }
+
+    // Build Choice Control Interfaces
+    let buttonsHTML = `<div class="decision-buttons" style="justify-content: center;">`;
+    if (node.choices) {
+        node.choices.forEach(choice => {
+            buttonsHTML += `<button class="decision-btn" onclick="executeTransition('${choice.next}')">${choice.text}</button>`;
+        });
+    }
+    buttonsHTML += `</div>`;
+
+    // Inject Constructed Interface Output Elements
+    viewport.innerHTML = `
+        <section class="content-box playbook-step">
+            <h2>${node.title}</h2>
+            <p style="line-height: 1.6;">${node.description}</p>
+            ${resourcesHTML}
+            ${buttonsHTML}
+        </section>
+    `;
+}
+
+/**
+ * Engine Navigation and Triggers
+ */
+function executeTransition(nextStepId) {
+    currentStepId = nextStepId;
+    renderCurrentStep();
+}
+
+function restartPlaybookEngine() {
+    currentStepId = "step1";
+    renderCurrentStep();
+}
+
+// Kickstart on Page Load Initialization
+document.addEventListener("DOMContentLoaded", () => {
+    renderCurrentStep();
+});
+
+</script>
+</main>
+</body>
+</html>

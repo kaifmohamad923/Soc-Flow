@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Persistence Mechanism Detection - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Persistence Mechanism Detection
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Persistence Mechanism Detection
+        </h2>
+
+        <p>
+          When this alert appears, I immediately treat it as a high-priority investigation because persistence usually means the attacker is attempting to maintain long-term access to the system. Unlike simple malware execution alerts, persistence detection often indicates that the attacker already executed code successfully and is now trying to survive reboots, user logouts, or security cleanup attempts.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The main goal during investigation is to identify what established persistence, how it was created, and whether the attacker still has active access.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Identify The Persistence Type</h2>
+
+      <br>
+
+      <p>
+        I would begin by understanding exactly what persistence mechanism triggered the alert. Different persistence methods reveal different attacker behaviors. Some malware uses simple Run registry keys, while more advanced threats may use WMI event subscriptions, scheduled tasks, services, startup folders, or DLL hijacking techniques.
+      </p>
+
+      <p>
+        At this stage, I focus on identifying whether the persistence mechanism is legitimate administrative behavior or clearly malicious activity.
+      </p>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Persistence type</li>
+        <li>Process or file involved</li>
+        <li>User account used</li>
+        <li>Creation timestamp</li>
+        <li>Parent process</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR alerts</li>
+        <li>Sysmon logs</li>
+        <li>Windows Event Logs</li>
+        <li>Registry monitoring logs</li>
+        <li>Task Scheduler logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Investigate What Created The Persistence</h2>
+
+      <br>
+
+      <p>
+        After identifying the persistence mechanism, I would immediately trace back to the process that created it. This is one of the most important parts of the investigation because persistence itself is usually only the symptom. The real objective is finding the original payload or attacker activity responsible for creating it.
+      </p>
+
+      <blockquote>
+        <strong>Critical Indicator:</strong> A browser, Office application, PowerShell script, or script interpreter spawning persistence-related activity is highly suspicious.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Parent-child process relationships</li>
+        <li>PowerShell execution</li>
+        <li>Script interpreters</li>
+        <li>Malware droppers</li>
+        <li>Office macro activity</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR process tree</li>
+        <li>Sysmon Event ID 1</li>
+        <li>PowerShell logs</li>
+        <li>Office telemetry</li>
+        <li>Script execution logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Analyze The Persistence Artifact</h2>
+
+      <br>
+
+      <p>
+        Once the source is identified, I would carefully inspect the persistence artifact itself. Attackers often use misleading names to make malicious entries appear legitimate. Scheduled tasks pretending to be Windows updates or registry entries mimicking security software are extremely common.
+      </p>
+
+      <p>
+        The location, filename, and execution command usually reveal whether the persistence is malicious.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Randomized filenames</li>
+        <li>Temp or AppData execution</li>
+        <li>Encoded PowerShell</li>
+        <li>Hidden scripts</li>
+        <li>Unsigned executables</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Common persistence locations:</h3>
+      <blockquote>
+        <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code><br>
+        <code>Startup Folder</code><br>
+        <code>Scheduled Tasks</code><br>
+        <code>Services</code><br>
+        <code>WMI Event Subscriptions</code>
+      </blockquote>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Registry Editor</li>
+        <li>Autoruns</li>
+        <li>Task Scheduler</li>
+        <li>WMI repository</li>
+        <li>Service manager logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Check For Active Malicious Behavior</h2>
+
+      <br>
+
+      <p>
+        Persistence alone does not confirm whether the attacker is still active, so I would review current endpoint activity for signs of ongoing execution or external communication. Many persistence mechanisms automatically reconnect to command-and-control servers after reboot or user login.
+      </p>
+
+      <p>
+        At this stage, I focus on identifying whether the system is actively compromised right now.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Outbound network connections</li>
+        <li>Beaconing behavior</li>
+        <li>Repeated script execution</li>
+        <li>Security tool tampering</li>
+        <li>New malware downloads</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Firewall logs</li>
+        <li>DNS logs</li>
+        <li>Network telemetry</li>
+        <li>EDR live process view</li>
+        <li>Antivirus alerts</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Investigate Scope And Lateral Movement</h2>
+
+      <br>
+
+      <p>
+        If malicious persistence is confirmed, I would immediately investigate whether similar persistence exists on other systems. Attackers rarely maintain access to only one machine, especially after achieving privilege escalation or domain access.
+      </p>
+
+      <p>
+        This phase helps determine whether the incident is isolated or part of broader attacker activity inside the environment.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Same scheduled tasks on multiple hosts</li>
+        <li>Shared hashes or filenames</li>
+        <li>Remote execution activity</li>
+        <li>Domain account abuse</li>
+        <li>Lateral movement tools</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM correlation searches</li>
+        <li>Active Directory logs</li>
+        <li>EDR threat hunting</li>
+        <li>Remote login logs</li>
+        <li>Network scanning activity</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Containment And Removal</h2>
+
+      <br>
+
+      <p>
+        Once the persistence mechanism is confirmed malicious, removal should happen carefully because deleting the artifact without understanding the root cause may allow the attacker to recreate it later. I would first isolate the host if active compromise indicators exist, then remove persistence while continuing to monitor for reinfection attempts.
+      </p>
+
+      <p>
+        At the same time, I would investigate whether credentials or administrative accounts were compromised during the intrusion.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Isolate affected host</li>
+        <li>Remove persistence artifacts</li>
+        <li>Block malicious hashes/domains</li>
+        <li>Reset compromised accounts</li>
+        <li>Hunt for reinfection indicators</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>What persistence mechanism was created?</li>
+        <li>Which process or attacker activity created it?</li>
+        <li>Is the malicious payload still active?</li>
+        <li>Did the attacker move to other systems?</li>
+        <li>Was long-term access successfully established?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are confirmed, the incident can be escalated properly and the environment can be checked for additional persistence mechanisms or hidden compromise indicators.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/app.js"></script>
+
+</body>
+</html>

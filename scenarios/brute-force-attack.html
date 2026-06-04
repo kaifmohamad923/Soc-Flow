@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Brute Force Attack - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <!-- CENTER MENU -->
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- CONTACT -->
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Brute Force Attack
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Brute Force Attack
+        </h2>
+
+        <p>
+          When this alert appears, the first thing I want to determine is whether this is normal failed login activity, password spraying, or an actual brute force attack attempting to gain unauthorized access. Failed logins happen regularly in every environment, so the investigation should focus on login patterns, attacker behavior, and whether any account was eventually compromised.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The main goal is to identify if the attacker successfully authenticated after repeated attempts.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The Alert</h2>
+
+      <br>
+
+      <p>
+        I would begin by reviewing the authentication logs related to the alert. At this stage, I want to understand which account was targeted, where the login attempts came from, and whether the activity involved a single user or multiple accounts. Brute force attacks usually generate a high number of failed logins within a short timeframe.
+      </p>
+
+      <blockquote>
+        <strong>Insight:</strong> The timing and volume of attempts often reveal whether this was automated activity.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Targeted username</li>
+        <li>Source IP address</li>
+        <li>Number of failed attempts</li>
+        <li>Login timestamps</li>
+        <li>Authentication method</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM authentication logs</li>
+        <li>Active Directory logs</li>
+        <li>VPN logs</li>
+        <li>Firewall logs</li>
+        <li>Cloud identity logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Identify The Attack Pattern</h2>
+
+      <br>
+
+      <p>
+        After validating the alert, I would analyze the login behavior itself because different patterns indicate different attack techniques. 
+      </p>
+
+      <blockquote>
+        <strong>Attack Pattern:</strong> A traditional brute force attack usually targets one account with many password attempts, while password spraying targets multiple accounts using a few common passwords.
+      </blockquote>
+
+      <p>
+        This stage helps determine attacker intent and potential risk level.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Single account vs multiple accounts</li>
+        <li>Rapid login attempts</li>
+        <li>Common password usage</li>
+        <li>Multiple source IPs</li>
+        <li>Geographic anomalies</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Authentication logs</li>
+        <li>Azure AD sign-in logs</li>
+        <li>VPN authentication events</li>
+        <li>IDS/IPS detections</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Determine If Login Was Successful</h2>
+
+      <br>
+
+      <blockquote>
+        <strong>Critical Phase:</strong> This is the most important part of the investigation. Many brute force attempts fail completely, but if the attacker eventually succeeds, the incident becomes an account compromise investigation instead of a simple login attack alert.
+      </blockquote>
+
+      <p>
+        I would carefully review successful logins immediately after failed attempts from the same IP address or device.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Successful authentication after failures</li>
+        <li>MFA bypass attempts</li>
+        <li>New device logins</li>
+        <li>Unusual login locations</li>
+        <li>Session creation activity</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Authentication success logs</li>
+        <li>MFA logs</li>
+        <li>VPN session logs</li>
+        <li>Cloud access logs</li>
+        <li>Identity monitoring dashboards</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Investigate Post-Authentication Activity</h2>
+
+      <br>
+
+      <p>
+        If a successful login occurred, I would immediately investigate what the attacker did after gaining access. Attackers often attempt mailbox access, privilege escalation, internal reconnaissance, or lateral movement shortly after compromise.
+      </p>
+
+      <blockquote>
+        <strong>Shift in Focus:</strong> At this stage, the investigation shifts from login monitoring to account misuse detection.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Mailbox rule creation</li>
+        <li>Sensitive file access</li>
+        <li>Administrative actions</li>
+        <li>Internal network access</li>
+        <li>New account creation</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Email audit logs</li>
+        <li>File access logs</li>
+        <li>Active Directory logs</li>
+        <li>EDR telemetry</li>
+        <li>Cloud audit trails</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Check Environment-Wide Activity</h2>
+
+      <br>
+
+      <blockquote>
+        <strong>Hunting Strategy:</strong> Brute force attacks rarely target only one account. Attackers usually scan multiple users, services, or exposed authentication portals. 
+      </blockquote>
+
+      <p>
+        I would search the environment for similar login attempts against other accounts or systems using the same source IP or indicators. This helps determine whether the attack was isolated or part of a larger campaign.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Multiple targeted accounts</li>
+        <li>Repeated attacker IPs</li>
+        <li>VPN gateway attacks</li>
+        <li>Password spraying behavior</li>
+        <li>Shared indicators across systems</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM correlation searches</li>
+        <li>Firewall logs</li>
+        <li>Identity management platforms</li>
+        <li>Threat intelligence feeds</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Containment And Response</h2>
+
+      <br>
+
+      <p>
+        If no login succeeded, containment may only require blocking the source IP and monitoring the targeted account. However, if compromise is suspected, password resets and session revocation become immediate priorities.
+      </p>
+
+      <p>
+        Accounts with administrative privileges should always be treated with higher urgency because successful brute force against privileged users can quickly lead to wider compromise.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Block malicious IP addresses</li>
+        <li>Reset compromised passwords</li>
+        <li>Revoke active sessions</li>
+        <li>Enforce MFA</li>
+        <li>Lock or monitor targeted accounts</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Was this a real brute force attack or normal failed login activity?</li>
+        <li>Did the attacker successfully authenticate?</li>
+        <li>Which accounts were targeted?</li>
+        <li>Was post-login malicious activity observed?</li>
+        <li>Are additional systems or accounts affected?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are confirmed, the incident can be properly contained and monitored for continued attack activity.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/app.js"></script>
+
+</body>
+</html>

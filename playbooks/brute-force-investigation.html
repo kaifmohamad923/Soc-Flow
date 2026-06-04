@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Alert Investigation - SOCFlow</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/brute-force-playbook.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h1>SOCFlow</h1>
+    </div>
+    <div class="sidebar-center">
+        <ul class="sidebar-menu">
+            <li><a href="../index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li><a href="../scenarios.html"><i class="fas fa-folder-open"></i><span>Scenarios</span></a></li>
+            <li class="active"><a href="../playbooks.html"><i class="fas fa-clipboard"></i><span>Playbooks</span></a></li>
+            <li><a href="../notes.html"><i class="fas fa-clipboard"></i><span>Notes</span></a></li>
+        </ul>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="../contact.html" class="contact-btn"><i class="fas fa-envelope"></i><span>Contact</span></a>
+    </div>
+</div>
+
+<main class="main-content">
+    <div class="playbook-progress">
+        <div id="progressFill" class="playbook-progress-fill"></div>
+    </div>
+
+    <div class="breadcrumb">Dashboard / Playbooks / Brute Force Alert Investigation</div>
+
+    <div id="playbook-viewport"></div>
+
+  <script>
+        window.onload = function () {
+            alert(
+                "⚠️ Disclaimer: This playbook is intended to assist analysts during investigations. Results generated should not be considered definitive evidence. Always validate findings manually."
+            );
+        };
+
+// ==========================================
+// BRUTE FORCE PLAYBOOK LOGIC
+// ==========================================
+
+// 1. Centralized Playbook Database Maps
+const playbooksData = {
+    "brute_force_investigation": {
+        
+        "steps": {
+            "step1": {
+                "title": "Step 1 - Validate the Alert",
+                "description": "Before diving into log analysis, verify that the alert contains actionable information. Review the alert details, targeted accounts, timestamp, source IP addresses, and the specific threshold that triggered the security product.<br><br><b>Where to Check:</b><br>You can usually find this information in your SIEM, Identity and Access Management (IAM) platform (e.g., Microsoft Entra ID / Azure AD, Okta), or the specific endpoint/firewall that generated the alert.<br><br><b>What Indicates Suspicious Activity?</b><br>Alerts indicating hundreds of failed attempts in a matter of seconds, attempts originating from blacklisted IPs, or alerts targeting disabled/dormant administrator accounts warrant immediate investigation.<br><br><b>Question:</b><br>Does the alert contain enough information to continue the investigation?",
+                "progress": 20,
+                "choices": [
+                    { "text": "Yes", "next": "step2" },
+                    { "text": "No", "next": "resultA" }
+                ]
+            },
+            "step2": {
+                "title": "Step 2 - Analyze the Source and Pattern",
+                "description": "Distinguishing a genuine brute force attack from a user who forgot their password requires analyzing the authentication pattern and the source of the traffic. Attackers often use automated tools, botnets, or VPNs to mask their identity.<br><br><b>Where to Check:</b><br>Review authentication logs for the targeted user(s). Examine the source IP addresses, Geolocation, User-Agent strings, and the volume of requests.<br><br><b>What Indicates Suspicious Activity?</b><br>Impossible travel (logins from multiple countries simultaneously), traffic originating from known Tor exit nodes or anonymizing VPNs, 'Password Spraying' (one IP targeting many different accounts with few passwords), or credential stuffing (using known leaked passwords) strongly indicate an attack.<br><br><b>Question:</b><br>Does the authentication pattern and source appear malicious?",
+                "progress": 40,
+                "resources": [
+                    { "name": "AbuseIPDB", "url": "https://www.abuseipdb.com" },
+                    { "name": "GreyNoise", "url": "https://viz.greynoise.io" },
+                    { "name": "VirusTotal", "url": "https://www.virustotal.com" }
+                ],
+                "choices": [
+                    { "text": "Malicious", "next": "step3" },
+                    { "text": "Normal / User Error", "next": "resultB" }
+                ]
+            },
+            "step3": {
+                "title": "Step 3 - Check for Successful Authentication",
+                "description": "The most critical phase of a brute force investigation is determining if the attacker successfully guessed a password. Even a single successful login hidden among thousands of failed attempts can lead to a severe breach.<br><br><b>Where to Check:</b><br>Filter your identity provider logs (e.g., Active Directory, Okta, Duo) or SIEM for Event ID 4624 (Successful Logon) or equivalent success events associated with the malicious source IPs identified in Step 2.<br><br><b>What Indicates Suspicious Activity?</b><br>A Success event immediately following a high volume of Failed events from the exact same suspicious IP address or unmanaged device.<br><br><b>Question:</b><br>Are there any successful authentication attempts originating from the suspicious source?",
+                "progress": 60,
+                "choices": [
+                    { "text": "Yes", "next": "step4" },
+                    { "text": "No", "next": "resultC" }
+                ]
+            },
+            "step4": {
+                "title": "Step 4 - Evaluate MFA Responses",
+                "description": "If an attacker successfully guesses a password, Multi-Factor Authentication (MFA) is often the last line of defense. You must determine if MFA successfully blocked the intrusion or if the attacker found a way around it.<br><br><b>Where to Check:</b><br>Review MFA logs within your identity provider (e.g., Microsoft Authenticator logs, Duo Security logs). Look for denied prompts, timeouts, or approved prompts.<br><br><b>What Indicates Suspicious Activity?</b><br>Signs of 'MFA Fatigue' (dozens of push notifications sent to the user in a short timeframe), suspicious device enrollments, or logins where MFA was completely bypassed due to legacy authentication protocols (e.g., IMAP/POP3).<br><br><b>Question:</b><br>Did MFA successfully block the attacker from gaining access?",
+                "progress": 80,
+                "choices": [
+                    { "text": "Yes (MFA Blocked)", "next": "resultD" },
+                    { "text": "No (Bypassed / Not Configured)", "next": "step5" }
+                ]
+            },
+            "step5": {
+                "title": "Step 5 - Assess Post-Authentication Impact",
+                "description": "If the attacker fully authenticated, you must immediately determine what actions they took inside the environment to scope the incident for containment and eradication.<br><br><b>Where to Check:</b><br>Review Microsoft 365 audit logs, EDR telemetry, SIEM events, and network traffic associated with the compromised account's session.<br><br><b>What Indicates Suspicious Activity?</b><br>Creation of malicious inbox rules (e.g., forwarding emails to an external address, hiding emails in the RSS feeds folder), unusual file downloads from SharePoint/OneDrive, privilege escalation, or lateral movement to other internal systems.<br><br><b>Question:</b><br>Is there evidence of malicious post-login activity or active session usage?",
+                "progress": 95,
+                "resources": [
+                    { "name": "MITRE ATT&CK", "url": "https://attack.mitre.org/" },
+                    { "name": "CloudTrail Logs", "url": "https://aws.amazon.com/cloudtrail/" },
+                    { "name": "Workspace Audit", "url": "https://support.google.com/a/answer/4579579" }
+                ],
+                "choices": [
+                    { "text": "Yes", "next": "resultE_Active" },
+                    { "text": "No", "next": "resultE_Containment" }
+                ]
+            },
+            
+            // ----------------------------------------------------
+            // FINAL RESULT NODES
+            // ----------------------------------------------------
+            "resultA": { 
+                "title": "🟢 Likely False Positive", 
+                "description": "The alert does not contain enough evidence or telemetry to support a brute force investigation. Additional logging or validation may be required before taking further action.",
+                "isResult": true 
+            },
+            "resultB": { 
+                "title": "🟡 Possible False Positive", 
+                "description": "The failed login attempts exhibit characteristics of normal user error (e.g., a forgotten password, an expired token, or a misconfigured email client on a personal device). No malicious indicators were identified.",
+                "isResult": true 
+            },
+            "resultC": { 
+                "title": "🔴 True Positive - Threat Blocked", 
+                "description": "A brute force or password spray attack was confirmed, but the attacker failed to guess the correct credentials. The threat was effectively blocked by account lockout policies or incorrect guesses. Consider blocking the offending IPs.",
+                "isResult": true 
+            },
+            "resultD": { 
+                "title": "🔴 True Positive - Credential Compromised", 
+                "description": "The attacker successfully brute-forced the user's password, but the intrusion was halted by Multi-Factor Authentication (MFA). The password is known to the attacker and must be reset immediately, though no environmental access was gained.",
+                "isResult": true 
+            },
+            "resultE_Active": { 
+                "title": "🚨 True Positive - User Compromised", 
+                "description": "Evidence confirms the attacker successfully brute-forced the password, bypassed/satisfied MFA, and gained full access to the account. Immediate incident response actions, session revocation, credential resets, and impact scoping are required.",
+                "isResult": true 
+            },
+            "resultE_Containment": { 
+                "title": "🚨 True Positive - User Compromised (Awaiting Containment)", 
+                "description": "Evidence confirms the attacker brute-forced the password and bypassed MFA. While active malicious post-login activity hasn't been observed yet, the account is fully compromised. Immediate session revocation and credential resets are required.",
+                "isResult": true 
+            }
+        }
+    }
+};
+
+// 2. State Engine Tracking Variables
+let currentPlaybookKey = "brute_force_investigation";
+let currentStepId = "step1";
+
+/**
+ * State Transition Engine
+ */
+function renderCurrentStep() {
+    const viewport = document.getElementById("playbook-viewport");
+    const playbook = playbooksData[currentPlaybookKey];
+    const node = playbook.steps[currentStepId];
+
+    if (!viewport || !node) return;
+
+    // Update Progress Indicator Layout
+    const progressVal = node.progress || 100;
+    const progressFill = document.getElementById("progressFill");
+    if (progressFill) {
+        progressFill.style.height = progressVal + "%";
+    }
+
+    // Handle Ultimate Resolution/Result Output Cards
+    if (node.isResult) {
+        viewport.innerHTML = `
+            <section class="content-box result-card" style="text-align: center;">
+                <h2>${node.title}</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; line-height: 1.6;">${node.description}</p>
+                <div class="decision-buttons" style="justify-content: center;">
+                    <button class="decision-btn" onclick="restartPlaybookEngine()">Restart Playbook</button>
+                </div>
+            </section>
+        `;
+        return;
+    }
+
+    // Build Step Meta Elements Layout (Tools & Links)
+    let resourcesHTML = "";
+    if (node.resources && node.resources.length > 0) {
+        resourcesHTML = `<div class="resource-grid" style="justify-content: center;">`;
+        node.resources.forEach(res => {
+            resourcesHTML += `<a target="_blank" href="${res.url}">${res.name}</a>`;
+        });
+        resourcesHTML += `</div>`;
+    }
+
+    // Build Choice Control Interfaces
+    let buttonsHTML = `<div class="decision-buttons" style="justify-content: center;">`;
+    if (node.choices) {
+        node.choices.forEach(choice => {
+            buttonsHTML += `<button class="decision-btn" onclick="executeTransition('${choice.next}')">${choice.text}</button>`;
+        });
+    }
+    buttonsHTML += `</div>`;
+
+    // Inject Constructed Interface Output Elements
+    viewport.innerHTML = `
+        <section class="content-box playbook-step" style="text-align: center;">
+            <h2>${node.title}</h2>
+            <p style="line-height: 1.6; text-align: left;">${node.description}</p>
+            ${resourcesHTML}
+            ${buttonsHTML}
+        </section>
+    `;
+}
+
+/**
+ * Engine Navigation and Triggers
+ */
+function executeTransition(nextStepId) {
+    currentStepId = nextStepId;
+    renderCurrentStep();
+}
+
+function restartPlaybookEngine() {
+    currentStepId = "step1";
+    renderCurrentStep();
+}
+
+// Kickstart on Page Load Initialization
+document.addEventListener("DOMContentLoaded", () => {
+    renderCurrentStep();
+});
+
+</script>
+</main>
+</body>
+</html>

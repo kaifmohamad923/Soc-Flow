@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Command and Control (C2) Traffic - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Command and Control (C2) Traffic
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Command and Control (C2) Traffic
+        </h2>
+
+        <p>
+          When this alert appears, I immediately treat it as potentially serious because Command and Control traffic usually indicates that a compromised system is communicating with attacker infrastructure. Unlike simple malware detection alerts, C2 activity often means the attacker already achieved execution on the endpoint and is now maintaining communication for remote control, payload delivery, data theft, or persistence.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The main objective during investigation is to determine whether the communication is real malicious beaconing or a false positive caused by legitimate software.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The C2 Alert</h2>
+
+      <br>
+
+      <p>
+        I would begin by reviewing the network connection details related to the alert. At this stage, I want to identify the affected host, destination IP or domain, communication protocol, and frequency of connections.
+      </p>
+
+      <blockquote>
+        <strong>Critical Indicator:</strong> Repeated outbound communication to rare or known malicious infrastructure is one of the strongest indicators of compromise.
+      </blockquote>
+
+      <p>
+        The first few minutes of investigation should focus on understanding how suspicious the connection actually looks.
+      </p>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Source hostname and user</li>
+        <li>Destination IP/domain</li>
+        <li>Connection frequency</li>
+        <li>Port and protocol used</li>
+        <li>Threat intelligence reputation</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM alerts</li>
+        <li>Firewall logs</li>
+        <li>Proxy logs</li>
+        <li>DNS logs</li>
+        <li>Threat intelligence feeds</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Analyze The Communication Pattern</h2>
+
+      <br>
+
+      <p>
+        After validating the alert, I would investigate how the system is communicating with the external infrastructure. Most malware families use periodic beaconing to maintain communication with the attacker. Consistent outbound traffic every few seconds or minutes is extremely suspicious, especially if the destination has no legitimate business purpose.
+      </p>
+
+      <blockquote>
+        <strong>Insight:</strong> The timing pattern often reveals automated malware behavior.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Repeated intervals</li>
+        <li>DNS tunneling behavior</li>
+        <li>Encrypted outbound traffic</li>
+        <li>Unusual ports</li>
+        <li>Long-duration connections</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Network telemetry</li>
+        <li>Packet captures</li>
+        <li>NetFlow data</li>
+        <li>DNS query logs</li>
+        <li>Proxy traffic analysis</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Investigate The Affected Endpoint</h2>
+
+      <br>
+
+      <p>
+        Once suspicious communication is confirmed, I would move directly to endpoint investigation because the C2 traffic is usually only the symptom of a larger compromise.
+      </p>
+
+      <blockquote>
+        <strong>Hunting Strategy:</strong> The real priority is identifying which process initiated the connection and what malware or script is responsible.
+      </blockquote>
+
+      <p>
+        At this stage, process investigation becomes extremely important.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Process creating network connection</li>
+        <li>PowerShell activity</li>
+        <li>Suspicious services</li>
+        <li>Unknown executables</li>
+        <li>Parent-child process chains</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR telemetry</li>
+        <li>Sysmon Event ID 3</li>
+        <li>Process tree analysis</li>
+        <li>Windows Event Logs</li>
+        <li>Running services</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Determine Attacker Activity</h2>
+
+      <br>
+
+      <p>
+        After identifying the suspicious process, I would investigate what the attacker may have done on the system. Many C2 frameworks are used for persistence, remote shell access, credential dumping, lateral movement, and additional payload delivery.
+      </p>
+
+      <p>
+        This stage determines whether the attacker actively controlled the host or whether the malware was still in an early infection stage.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Credential access attempts</li>
+        <li>Lateral movement activity</li>
+        <li>File downloads</li>
+        <li>Persistence mechanisms</li>
+        <li>Remote execution commands</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>PowerShell logs</li>
+        <li>Authentication logs</li>
+        <li>File creation events</li>
+        <li>Registry changes</li>
+        <li>Scheduled task activity</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Investigate Scope Across Environment</h2>
+
+      <br>
+
+      <p>
+        If one host is communicating with attacker infrastructure, I immediately check whether other systems show similar traffic patterns.
+      </p>
+
+      <blockquote>
+        <strong>Environment Check:</strong> Malware infections and post-exploitation frameworks rarely stay isolated to a single endpoint for long. This phase is critical for determining the scale of the compromise.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Same destination IP/domain</li>
+        <li>Similar process hashes</li>
+        <li>Shared persistence artifacts</li>
+        <li>Multiple infected hosts</li>
+        <li>Internal lateral movement</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM correlation searches</li>
+        <li>EDR threat hunting</li>
+        <li>DNS query history</li>
+        <li>Network monitoring systems</li>
+        <li>Asset inventory tools</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Containment And Response</h2>
+
+      <br>
+
+      <p>
+        If malicious C2 communication is confirmed, containment should happen immediately because the attacker may still have active remote access to the environment. I would isolate the affected host before beginning deeper forensic analysis to prevent additional commands, malware downloads, or data exfiltration.
+      </p>
+
+      <p>
+        The investigation should continue even after isolation because persistence and secondary infections are common.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Isolate affected endpoint</li>
+        <li>Block malicious IPs/domains</li>
+        <li>Terminate malicious processes</li>
+        <li>Remove persistence</li>
+        <li>Hunt for related indicators</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Was the outbound communication truly malicious?</li>
+        <li>Which process initiated the connection?</li>
+        <li>Did the attacker gain active remote access?</li>
+        <li>Was persistence established on the host?</li>
+        <li>Are additional systems communicating with the same infrastructure?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are confirmed, the incident can be escalated properly and broader threat hunting can begin across the environment.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/"></script>
+
+</body>
+</html>

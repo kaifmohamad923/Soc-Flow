@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SQL Injection Detected - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      SQL Injection Detected
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          SQL Injection Detected
+        </h2>
+
+        <p>
+          When this alert appears, the first thing I want to determine is whether this was a real exploitation attempt or just noisy web scanning activity. SQL injection alerts are extremely common on internet-facing applications because attackers and automated bots continuously test login forms, search bars, API parameters, and URL inputs for database vulnerabilities.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The main objective during investigation is to understand whether the payload successfully interacted with the backend database or whether the web application blocked the request before execution.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The Alert</h2>
+
+      <br>
+
+      <p>
+        I would begin by reviewing the raw HTTP request that triggered the detection. Most SIEM alerts already contain the suspicious payload, request URI, source IP, user-agent, and affected endpoint. At this stage, I focus on identifying whether the request contains classic SQL injection patterns or whether the alert was triggered by normal application behavior.
+      </p>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Source IP address</li>
+        <li>Targeted URL or parameter</li>
+        <li>HTTP method</li>
+        <li>Raw payload</li>
+        <li>Response status code</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM event details</li>
+        <li>WAF logs</li>
+        <li>Web server logs</li>
+        <li>Reverse proxy logs</li>
+        <li>Load balancer logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Analyze The Payload</h2>
+
+      <br>
+
+      <p>
+        After validating the alert, I carefully inspect the payload itself because it often reveals the attacker’s intent and skill level. Basic payloads like <code>' OR 1=1 --</code> usually indicate automated scanning, while UNION SELECT queries, time-based injections, or database fingerprinting attempts suggest more advanced activity.
+      </p>
+
+      <blockquote>
+        <strong>Insight:</strong> The payload also helps identify whether the attacker attempted authentication bypass, database enumeration, or data extraction.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>SQL keywords</li>
+        <li>Encoding or obfuscation</li>
+        <li>Comment operators</li>
+        <li>UNION-based payloads</li>
+        <li>Time-delay functions</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Examples of suspicious patterns:</h3>
+      <blockquote>
+        <code>' OR 1=1 --</code><br>
+        <code>UNION SELECT username,password FROM users</code><br>
+        <code>SLEEP(5)</code><br>
+        <code>WAITFOR DELAY '00:00:05'</code>
+      </blockquote>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>HTTP request logs</li>
+        <li>WAF detections</li>
+        <li>IDS/IPS alerts</li>
+        <li>Application logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Determine If The Injection Succeeded</h2>
+
+      <br>
+
+      <blockquote>
+        <strong>Critical Phase:</strong> This is the most important stage of the investigation. A detected SQL injection attempt does not automatically mean the application is vulnerable.
+      </blockquote>
+
+      <p>
+        I would review the server response and backend behavior to determine whether the payload actually affected database operations. A successful SQL injection often causes unusual database queries, server errors, authentication bypasses, or abnormal response sizes. Time-based injections may also create delayed server responses.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>HTTP 200 responses</li>
+        <li>SQL errors</li>
+        <li>Long response times</li>
+        <li>Unexpected database queries</li>
+        <li>Authentication anomalies</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Database logs</li>
+        <li>Application logs</li>
+        <li>Web server logs</li>
+        <li>Authentication logs</li>
+        <li>API monitoring tools</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Investigate Attacker Activity</h2>
+
+      <br>
+
+      <p>
+        If the injection appears successful, I would immediately investigate whether the attacker attempted enumeration or data access after exploitation. Attackers rarely stop after a single request. They usually continue with table discovery, credential dumping, privilege escalation, or admin panel access attempts.
+      </p>
+
+      <p>
+        At this stage, I focus on identifying follow-up behavior from the same IP address or session.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Multiple payload attempts</li>
+        <li>Admin page access</li>
+        <li>Large database responses</li>
+        <li>Credential extraction activity</li>
+        <li>API abuse</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Session logs</li>
+        <li>Web access logs</li>
+        <li>Database query logs</li>
+        <li>Authentication systems</li>
+        <li>SIEM correlation searches</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Check Impact On The Application</h2>
+
+      <br>
+
+      <p>
+        Once exploitation is suspected, I would assess whether sensitive data was exposed or modified. SQL injection attacks can lead to credential theft, database dumping, unauthorized account creation, or complete application compromise depending on the database permissions assigned to the application.
+      </p>
+
+      <p>
+        This phase determines the actual severity of the incident.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Data access activity</li>
+        <li>Unauthorized account changes</li>
+        <li>Database modifications</li>
+        <li>Privilege escalation</li>
+        <li>Sensitive table access</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Database audit logs</li>
+        <li>User management logs</li>
+        <li>Change monitoring systems</li>
+        <li>Application audit trails</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Containment And Remediation</h2>
+
+      <br>
+
+      <p>
+        If the attack was blocked successfully, containment may only require IP blocking and rule tuning. However, if exploitation succeeded, the issue becomes both a security incident and a development problem because the vulnerable parameter must be fixed immediately.
+      </p>
+
+      <p>
+        I would coordinate with the application or development team to confirm whether input validation, parameterized queries, and WAF protections are properly implemented.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Block malicious IPs</li>
+        <li>Patch vulnerable parameters</li>
+        <li>Reset exposed credentials</li>
+        <li>Enable stricter WAF rules</li>
+        <li>Review exposed database access</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should ultimately answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Was the request malicious or false positive?</li>
+        <li>Did the payload successfully execute?</li>
+        <li>Was any data accessed or modified?</li>
+        <li>Did the attacker continue activity after exploitation?</li>
+        <li>Is the vulnerable endpoint still exposed?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are confirmed, the incident can be properly contained and escalated if database compromise is suspected.
+      </p>
+
+    </section>
+
+  </main>
+
+<!-- JAVASCRIPT -->
+  <script src="../js/app.js"></script>
+
+</body>
+</html>

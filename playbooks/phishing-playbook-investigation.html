@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Alert Investigation - SOCFlow</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/phishing-playbook.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h1>SOCFlow</h1>
+    </div>
+    <div class="sidebar-center">
+        <ul class="sidebar-menu">
+            <li><a href="../index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li><a href="../scenarios.html"><i class="fas fa-folder-open"></i><span>Scenarios</span></a></li>
+            <li class="active"><a href="../playbooks.html"><i class="fas fa-clipboard"></i><span>Playbooks</span></a></li>
+            <li><a href="../notes.html"><i class="fas fa-clipboard"></i><span>Notes</span></a></li>
+        </ul>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="../contact.html" class="contact-btn"><i class="fas fa-envelope"></i><span>Contact</span></a>
+    </div>
+</div>
+
+<main class="main-content">
+    <div class="playbook-progress">
+        <div id="progressFill" class="playbook-progress-fill"></div>
+    </div>
+
+    <div class="breadcrumb">Dashboard / Playbooks / Phishing Alert Investigation</div>
+
+    <div id="playbook-viewport"></div>
+
+  <script>
+        window.onload = function () {
+            alert(
+                "⚠️ Educational use only. Verify all findings manually before taking action."
+            );
+        };
+
+// ==========================================
+// PHISHING PLAYBOOK LOGIC
+// ==========================================
+
+// 1. Centralized Playbook Database Maps
+const playbooksData = {
+    "phishing_investigation": {
+        
+        "steps": {
+            "step1": {
+                "title": "Step 1 - Validate the Alert",
+                "description": "Before investigating the email itself, verify that the alert contains enough information to support an investigation. Review the alert details, affected user, sender address, email subject, and the reason why the security product generated the alert.<br><br><b>Where to Check:</b><br>You can usually find this information in your SIEM, email security gateway, Microsoft Defender, Microsoft 365 Message Trace, or any email security solution that generated the alert.<br><br><b>What Indicates Suspicious Activity?</b><br>Alerts triggered by URL reputation detections, malicious attachments, impersonation attempts, or known phishing signatures typically warrant further investigation. <br><br> <b>Question</b><br>Does the alert contain enough information to continue the investigation?.",
+                "progress": 16,
+                "choices": [
+                    { "text": "Yes", "next": "step2" },
+                    { "text": "No", "next": "resultA" }
+                ]
+            },
+            "step2": {
+                "title": "Step 2 - Analyze the Sender",
+                "description": "The sender's identity often provides valuable clues during a phishing investigation. Attackers commonly use lookalike domains, display name spoofing, or compromised accounts to make emails appear trustworthy.<br><br><b>Where to Check:</b><br>Review the sender information within the email header. If available, verify SPF, DKIM, and DMARC results through your email security platform.<br><br><b>What Indicates Suspicious Activity?</b><br>Misspelled domains, recently registered domains, failed email authentication checks, and poor reputation scores can indicate malicious activity.  <br><br> <b>Question</b><br>Does the sender appear suspicious?.",
+                "progress": 33,
+                "resources": [
+                    { "name": "VirusTotal", "url": "https://www.virustotal.com" },
+                    { "name": "MXToolbox", "url": "https://mxtoolbox.com" },
+                    { "name": "Cisco Talos", "url": "https://talosintelligence.com" }
+                ],
+                "choices": [
+                    { "text": "Suspicious", "next": "step3" },
+                    { "text": "Legitimate", "next": "step4" }
+                ]
+            },
+            "step3": {
+                "title": "Step 3 - Investigate Embedded URLs",
+                "description": "Many phishing emails rely on malicious links to steal credentials or deliver malware. Review every URL contained within the email and identify unusual domains, URL shortening services, or redirect chains.<br><br><b>Where to Check:</b><br>Examine the original email content and review any associated proxy logs or web filtering logs to determine whether users attempted to access the URLs.<br><br><b>What Indicates Suspicious Activity?</b><br>Credential harvesting pages, newly registered domains, suspicious redirects, and URLs flagged by threat intelligence sources may indicate phishing activity. <br><br> <b>Question</b><br> Are malicious or suspicious URLs present in the email? ",
+                "progress": 50,
+                "resources": [
+                    { "name": "VirusTotal", "url": "https://www.virustotal.com" },
+                    { "name": "URLScan", "url": "https://urlscan.io" },
+                    { "name": "Any.Run", "url": "https://any.run" }
+                ],
+                "choices": [
+                    { "text": "Yes", "next": "step5" },
+                    { "text": "No", "next": "step4" }
+                ]
+            },
+            "step4": {
+                "title": "Step 4 - Review Email Content",
+                "description": "Carefully examine the email message itself. Phishing emails often attempt to create urgency, request sensitive information, or impersonate trusted organizations.<br><br><b>Where to Check:</b><br>Review the email body, subject line, attachments, and any embedded images or links.<br><br><b>What Indicates Suspicious Activity?</b><br>Unexpected requests for credentials, financial transactions, password resets, invoice payments, or urgent action may indicate phishing attempts. <br><br> <b>Question</b><br> Does the email contain phishing characteristics? ",
+                "progress": 66,
+                "choices": [
+                    { "text": "Yes", "next": "step5" },
+                    { "text": "No", "next": "resultB" }
+                ]
+            },
+            "step5": {
+                "title": "Step 5 - Check User Interaction",
+                "description": "Determining whether the user interacted with the email is critical for assessing potential impact. Identify whether the email was opened, links were clicked, attachments were executed, or credentials were submitted.<br><br><b>Where to Check:</b><br>Review Microsoft 365 audit logs, endpoint telemetry, proxy logs, browser history, and email tracking data.<br><br><b>What Indicates Suspicious Activity?</b><br>Evidence of link clicks, attachment execution, credential submission, or browser activity associated with the phishing email increases the likelihood of compromise.  <br><br> <b>Question</b><br> Did the user interact with the phishing email? ",
+                "progress": 83,
+                "choices": [
+                    { "text": "Yes", "next": "step6" },
+                    { "text": "No", "next": "resultC" }
+                ]
+            },
+            "step6": {
+                "title": "Step 6 - Assess Impact",
+                "description": "At this stage, determine whether the phishing activity resulted in account compromise, malware execution, or other security impacts.<br><br><b>Where to Check:</b><br>Review authentication logs, endpoint telemetry, EDR alerts, antivirus logs, and SIEM events related to the affected user and device.<br><br><b>What Indicates Suspicious Activity?</b><br>Unexpected logins, credential theft indicators, malware execution, suspicious PowerShell activity, or unauthorized account actions may indicate successful compromise. <br><br> <b>Question</b><br> Is there evidence of compromise?  ",
+                "progress": 95,
+                "resources": [
+                    { "name": "MITRE ATT&CK", "url": "https://attack.mitre.org/" },
+                    { "name": "VirusTotal", "url": "https://www.virustotal.com" },
+                    { "name": "Any.Run", "url": "https://any.run" }
+                ],
+                "choices": [
+                    { "text": "Yes", "next": "resultE" },
+                    { "text": "No", "next": "resultD" }
+                ]
+            },
+            
+            // ----------------------------------------------------
+            // FINAL RESULT NODES
+            // ----------------------------------------------------
+            "resultA": { 
+                "title": "🟢 Likely False Positive", 
+                "description": "The alert does not contain enough evidence to support a phishing investigation. Additional validation may be required before taking further action.",
+                "isResult": true 
+            },
+            "resultB": { 
+                "title": "🟡 Possible False Positive", 
+                "description": "The email does not exhibit significant phishing characteristics and no malicious indicators were identified during the investigation.",
+                "isResult": true 
+            },
+            "resultC": { 
+                "title": "🔴 True Positive - Threat Blocked", 
+                "description": "The phishing email was confirmed malicious, but there is no evidence that the user interacted with the content. Consider removing similar emails from other mailboxes and blocking associated indicators.",
+                "isResult": true 
+            },
+            "resultD": { 
+                "title": "🔴 True Positive - Phishing Attempt", 
+                "description": "Malicious indicators were identified within the email and user interaction occurred. However, no evidence of successful compromise was observed.",
+                "isResult": true 
+            },
+            "resultE": { 
+                "title": "🚨 True Positive - User Compromised", 
+                "description": "Evidence suggests that the phishing activity resulted in account compromise, malware execution, credential theft, or unauthorized access. Immediate containment and incident response actions are recommended.",
+                "isResult": true 
+            }
+        }
+    }
+};
+
+// 2. State Engine Tracking Variables
+let currentPlaybookKey = "phishing_investigation";
+let currentStepId = "step1";
+
+/**
+ * State Transition Engine
+ */
+function renderCurrentStep() {
+    const viewport = document.getElementById("playbook-viewport");
+    const playbook = playbooksData[currentPlaybookKey];
+    const node = playbook.steps[currentStepId];
+
+    if (!viewport || !node) return;
+
+    // Update Progress Indicator Layout
+    const progressVal = node.progress || 100;
+    const progressFill = document.getElementById("progressFill");
+    if (progressFill) {
+        progressFill.style.height = progressVal + "%";
+    }
+
+    // Handle Ultimate Resolution/Result Output Cards
+    if (node.isResult) {
+        viewport.innerHTML = `
+            <section class="content-box result-card">
+                <h2>${node.title}</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; line-height: 1.6;">${node.description}</p>
+                <div class="decision-buttons" style="justify-content: center;">
+                    <button class="decision-btn" onclick="restartPlaybookEngine()">Restart Playbook</button>
+                </div>
+            </section>
+        `;
+        // The scroll command has been removed here
+        return;
+    }
+
+    // Build Step Meta Elements Layout (Tools & Links)
+    let resourcesHTML = "";
+    if (node.resources && node.resources.length > 0) {
+        resourcesHTML = `<div class="resource-grid" style="justify-content: center;">`;
+        node.resources.forEach(res => {
+            resourcesHTML += `<a target="_blank" href="${res.url}">${res.name}</a>`;
+        });
+        resourcesHTML += `</div>`;
+    }
+
+    // Build Choice Control Interfaces
+    let buttonsHTML = `<div class="decision-buttons" style="justify-content: center;">`;
+    if (node.choices) {
+        node.choices.forEach(choice => {
+            buttonsHTML += `<button class="decision-btn" onclick="executeTransition('${choice.next}')">${choice.text}</button>`;
+        });
+    }
+    buttonsHTML += `</div>`;
+
+    // Inject Constructed Interface Output Elements
+    viewport.innerHTML = `
+        <section class="content-box playbook-step">
+            <h2>${node.title}</h2>
+            <p style="line-height: 1.6;">${node.description}</p>
+            ${resourcesHTML}
+            ${buttonsHTML}
+        </section>
+    `;
+
+    // The scroll command has been removed here as well
+}
+
+/**
+ * Engine Navigation and Triggers
+ */
+function executeTransition(nextStepId) {
+    currentStepId = nextStepId;
+    renderCurrentStep();
+}
+
+function restartPlaybookEngine() {
+    currentStepId = "step1";
+    renderCurrentStep();
+}
+
+// Kickstart on Page Load Initialization
+document.addEventListener("DOMContentLoaded", () => {
+    renderCurrentStep();
+});
+
+</script>
+</main>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Suspicious VPN Login - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <!-- CENTER MENU -->
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- CONTACT -->
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Suspicious VPN Login
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Suspicious VPN Login
+        </h2>
+
+        <p>
+          When this alert appears, the first thing I want to determine is whether the login actually belongs to the legitimate user or whether an attacker gained remote access using stolen credentials. VPN alerts become dangerous because they provide direct access into the internal environment.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The investigation should focus on login behavior, user activity, source location, and what happened after the VPN connection was established.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The VPN Login</h2>
+
+      <br>
+
+      <p>
+        I would begin by reviewing the VPN authentication details to understand who logged in, from where, and at what time. At this stage, I compare the activity with the user’s normal behavior because suspicious VPN logins often involve unusual countries, uncommon devices, or impossible travel scenarios.
+      </p>
+
+      <blockquote>
+        <strong>Insight:</strong> The objective here is to determine whether the login already looks abnormal before investigating deeper.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Username</li>
+        <li>Source IP address</li>
+        <li>Geolocation</li>
+        <li>Login timestamp</li>
+        <li>VPN device or client used</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>VPN logs</li>
+        <li>SIEM authentication events</li>
+        <li>Firewall logs</li>
+        <li>Identity provider logs</li>
+        <li>MFA logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Analyze Login Behavior</h2>
+
+      <br>
+
+      <p>
+        After validating the login, I would review the authentication pattern around the event. Many attackers generate failed logins before success, attempt MFA fatigue attacks, or authenticate from infrastructure previously associated with malicious activity.
+      </p>
+
+      <blockquote>
+        <strong>Critical Indicator:</strong> A successful VPN login after multiple failed attempts is a major red flag.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Multiple failed logins</li>
+        <li>Impossible travel activity</li>
+        <li>Login outside business hours</li>
+        <li>New or unusual device</li>
+        <li>MFA denial or bypass attempts</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>VPN authentication logs</li>
+        <li>Azure AD or Okta logs</li>
+        <li>MFA provider logs</li>
+        <li>Threat intelligence feeds</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Verify User Legitimacy</h2>
+
+      <br>
+
+      <p>
+        At this stage, I try to determine whether the real user performed the login. Many suspicious VPN alerts turn out to be legitimate travel activity, remote work, or ISP geolocation mismatches. However, assumptions are dangerous in identity-related incidents.
+      </p>
+
+      <p>
+        I would compare the login with the user’s historical behavior and, if necessary, confirm directly with the user or management.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>User’s normal login locations</li>
+        <li>Device history</li>
+        <li>Previous VPN usage</li>
+        <li>Travel or remote work activity</li>
+        <li>Concurrent sessions from different locations</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Historical authentication logs</li>
+        <li>Endpoint inventory</li>
+        <li>Asset management tools</li>
+        <li>HR or travel records if applicable</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Investigate Post-Login Activity</h2>
+
+      <br>
+
+      <p>
+        If the login appears suspicious, I immediately investigate what the user account accessed after connecting to the VPN. This is one of the most important phases because attackers usually begin reconnaissance or lateral movement soon after gaining remote access.
+      </p>
+
+      <blockquote>
+        <strong>Shift in Focus:</strong> The focus shifts from authentication analysis to attacker behavior inside the environment.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Internal network scanning</li>
+        <li>File share access</li>
+        <li>RDP or SSH attempts</li>
+        <li>Privileged account usage</li>
+        <li>Sensitive system access</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR telemetry</li>
+        <li>Firewall logs</li>
+        <li>Active Directory logs</li>
+        <li>File server logs</li>
+        <li>Network monitoring tools</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Check For Persistence Or Lateral Movement</h2>
+
+      <br>
+
+      <p>
+        If compromise indicators are confirmed, I would continue by investigating whether the attacker attempted persistence or movement to other systems. VPN access often becomes the initial entry point before privilege escalation or domain compromise activity begins.
+      </p>
+
+      <p>
+        This phase helps determine the overall scope of the intrusion.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>New account creation</li>
+        <li>Scheduled tasks</li>
+        <li>Remote execution tools</li>
+        <li>PowerShell activity</li>
+        <li>Credential dumping attempts</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Windows Event Logs</li>
+        <li>Sysmon logs</li>
+        <li>PowerShell logs</li>
+        <li>Active Directory audit logs</li>
+        <li>EDR process investigations</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 6 — Containment And Response</h2>
+
+      <br>
+
+      <p>
+        If the login is confirmed malicious or highly suspicious, containment should happen immediately because attackers with VPN access already have internal network connectivity. The affected account and any associated sessions should be revoked before further investigation continues.
+      </p>
+
+      <p>
+        At the same time, I would begin searching for additional compromised accounts or related attacker activity.
+      </p>
+
+      <br>
+
+      <h3>Main response actions:</h3>
+      <ul class="checklist">
+        <li>Disable or reset affected account</li>
+        <li>Revoke VPN sessions</li>
+        <li>Enforce password reset and MFA reset</li>
+        <li>Block malicious IPs</li>
+        <li>Isolate affected systems if needed</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should answer these questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Was the VPN login legitimate or unauthorized?</li>
+        <li>Were stolen credentials used?</li>
+        <li>What systems or data were accessed after login?</li>
+        <li>Did the attacker move inside the network?</li>
+        <li>Are other accounts or systems affected?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are confirmed, the incident can be properly escalated and containment actions can begin immediately.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/app.js"></script>
+
+</body>
+</html>

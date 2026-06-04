@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Phishing URL Detected - SOCFlow</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+</head>
+
+<body>
+
+  <script src="app.js"></script>
+
+
+
+
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+ <div class="sidebar">
+
+    <div class="logo">
+        <h1>SOCFlow</h1>
+        
+    </div>
+
+    <div class="sidebar-center">
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="../scenarios.html">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Scenarios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../playbooks.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Playbooks</span>
+                </a>
+            </li>
+
+           <li>
+                <a href="../notes.html">
+                    <i class="fas fa-clipboard"></i>
+                    <span>Notes</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="sidebar-bottom">
+
+        <a href="../contact.html" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </a>
+
+    </div>
+
+</div>
+
+  <main class="main-content">
+
+    <div class="breadcrumb">
+      <a href="../index.html">Dashboard</a> / 
+      <a href="../scenarios.html">Scenarios</a> / 
+      Phishing URL Detected
+    </div>
+
+    <section class="content-box">
+      <div>
+        
+        <h2>
+          Phishing URL Detected
+        </h2>
+
+        <p>
+          When this alert appears, the first thing I want to know is whether the user actually interacted with the phishing URL or whether the connection was blocked before the page loaded. Many phishing alerts are harmless delivery attempts, while others become full account compromise incidents.
+        </p>
+
+        <blockquote>
+          <strong>Important:</strong> The investigation should focus on understanding how far the attack progressed rather than only confirming the URL is malicious.
+        </blockquote>
+        
+      </div>
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 1 — Validate The Alert</h2>
+
+      <br>
+
+      <p>
+        I would begin by reviewing the SIEM alert details and collecting the basic information related to the event. At this stage, the goal is to understand who triggered the alert, when it happened, and which security product detected it. Proxy logs, email security alerts, DNS logs, and EDR telemetry usually provide the initial evidence needed for triage.
+      </p>
+
+      <br>
+
+      <h3>Main things to verify:</h3>
+      <ul class="checklist">
+        <li>Username and hostname</li>
+        <li>Full URL and domain</li>
+        <li>Detection source</li>
+        <li>Timestamp</li>
+        <li>Allowed or blocked connection</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>SIEM timeline</li>
+        <li>Proxy/Web gateway logs</li>
+        <li>Email security platform</li>
+        <li>DNS security logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 2 — Confirm User Interaction</h2>
+
+      <br>
+
+      <p>
+        After validating the alert, I would check whether the phishing page was actually accessed successfully. A blocked request is far less dangerous than a successful HTTP 200 response. Redirect chains are also important because attackers often hide phishing infrastructure behind multiple redirects or shortened URLs.
+      </p>
+
+      <p>
+        At this stage I focus heavily on browser activity because it tells me whether the attack moved beyond delivery into execution or credential theft territory.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>HTTP response codes</li>
+        <li>Browser history</li>
+        <li>Redirect activity</li>
+        <li>File download attempts</li>
+        <li>Multiple connection attempts</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Proxy logs</li>
+        <li>Browser history</li>
+        <li>EDR web activity</li>
+        <li>Secure web gateway logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 3 — Investigate Endpoint Activity</h2>
+
+      <br>
+
+      <p>
+        Once user interaction is confirmed, I move directly to endpoint investigation. This is usually the most important part because phishing becomes dangerous only after execution or credential theft begins. I carefully review the process tree to identify suspicious child processes spawned from browsers or email clients.
+      </p>
+
+      <blockquote>
+        <strong>Critical Indicator:</strong> Processes like PowerShell, cmd.exe, mshta.exe, wscript.exe, or rundll32.exe launched from Chrome or Outlook immediately increase the severity of the alert.
+      </blockquote>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Process tree</li>
+        <li>Script execution</li>
+        <li>Downloaded payloads</li>
+        <li>Suspicious child processes</li>
+        <li>Newly created files</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>EDR telemetry</li>
+        <li>Sysmon logs</li>
+        <li>Windows Event Logs</li>
+        <li>Temp and Downloads folders</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 4 — Check For Credential Theft</h2>
+
+      <br>
+
+      <p>
+        If the phishing page imitated Microsoft 365, VPN, or any authentication portal, I would assume credentials may have been compromised until proven otherwise. Modern phishing campaigns often focus more on stealing cloud access and session tokens than delivering malware.
+      </p>
+
+      <p>
+        I would immediately review authentication activity around the same timeframe to identify suspicious login behavior or MFA abuse attempts.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Impossible travel logins</li>
+        <li>MFA fatigue attempts</li>
+        <li>New devices or IPs</li>
+        <li>OAuth consent activity</li>
+        <li>Mailbox forwarding rules</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Microsoft 365 logs</li>
+        <li>Azure AD sign-in logs</li>
+        <li>VPN logs</li>
+        <li>Email audit logs</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Step 5 — Look For Persistence Or Malware Activity</h2>
+
+      <br>
+
+      <p>
+        If suspicious execution occurred, I would continue the investigation by checking whether the attacker attempted persistence or external communication. Malware delivered through phishing often creates scheduled tasks, registry run keys, or outbound C2 traffic shortly after execution.
+      </p>
+
+      <p>
+        This stage determines whether the incident remained a phishing attempt or evolved into a compromised endpoint investigation.
+      </p>
+
+      <br>
+
+      <h3>Main things to focus on:</h3>
+      <ul class="checklist">
+        <li>Scheduled tasks</li>
+        <li>Registry Run keys</li>
+        <li>Network beaconing</li>
+        <li>External IP communication</li>
+        <li>Antivirus or EDR detections</li>
+      </ul>
+
+      <br><br>
+
+      <h3>Where to look:</h3>
+      <ul class="checklist">
+        <li>Task Scheduler</li>
+        <li>Registry paths</li>
+        <li>Network logs</li>
+        <li>Firewall logs</li>
+        <li>EDR alerts</li>
+      </ul>
+
+    </section>
+
+    <section class="content-box">
+
+      <h2>Final Investigation Goal</h2>
+
+      <br>
+
+      <p>
+        The investigation should always answer four important questions:
+      </p>
+
+      <ol class="methodology-list">
+        <li>Did the user interact with the phishing page?</li>
+        <li>Were credentials stolen?</li>
+        <li>Was malware executed?</li>
+        <li>Did the attacker establish persistence or external access?</li>
+      </ol>
+
+      <br>
+
+      <p>
+        Once those answers are clear, containment actions become much easier and the incident can be escalated properly if compromise is confirmed.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script src="../js/"></script>
+
+</body>
+</html>
